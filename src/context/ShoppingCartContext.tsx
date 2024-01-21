@@ -1,7 +1,7 @@
-/* eslint-disable react-refresh/only-export-components */
-import { ReactNode, createContext, useContext, useState } from "react";
+import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import ShoppingCart from "../components/ShoppingCart";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { fetchCategory, fetchProducts } from "../api/api";
 
 type ShoppingCartProviderProps = {
   children: ReactNode;
@@ -10,6 +10,23 @@ type CartItem = {
   id: number;
   quantity: number;
 };
+type Product={
+  id: number,
+  title: string,
+  price: number,
+  description: string,
+  images: string[],
+  category:{
+    id: number,
+    name: string,
+    image: string,
+  }
+}
+
+type Category ={
+  id: number,
+  name: string
+}
 type ShoppingCartContext = {
   openCart: () => void;
   closeCart: () => void;
@@ -19,6 +36,9 @@ type ShoppingCartContext = {
   removeFromCart: (id: number) => void;
   cartQuantity: number;
   cartItem: CartItem[];
+  dataP: Product[] | undefined,
+  dataC: Category[] | undefined,
+  isLoadingP: boolean,
 };
 
 const ShoppingCartContext = createContext({} as ShoppingCartContext);
@@ -28,6 +48,42 @@ export function useShoppingCart() {
 }
 
 export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
+  // product
+  const [dataP, setDataP] = useState();
+  const [dataC, setDataC] = useState();
+
+  const [isLoadingP, setLoadingP] = useState(false);
+
+
+  useEffect(()=>{
+    setLoadingP(true);
+    const fetchProductFromApi = async() =>{
+      try{
+        const result = await fetchProducts();
+        
+        setDataP(result);
+      }
+      catch(error){
+        console.log(error)
+      }
+    }
+
+    const fetchCategoryFromApi = async() =>{
+      try{
+        const result = await fetchCategory();
+        setDataC(result);
+        console.log(result)
+      }
+      catch(error){
+        console.log(error)
+      }
+    }
+    fetchProductFromApi();
+    fetchCategoryFromApi();
+    setLoadingP(false)
+  },[])
+
+
   const [cartItem, setCartItems] = useLocalStorage<CartItem[]>(
     "shopping-cart",
     []
@@ -88,6 +144,9 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
   return (
     <ShoppingCartContext.Provider
       value={{
+        isLoadingP,
+        dataP,
+        dataC,
         openCart,
         closeCart,
         cartQuantity,

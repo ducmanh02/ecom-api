@@ -1,14 +1,41 @@
-import { Button, Card } from "react-bootstrap";
+import { Button, Card,  } from "react-bootstrap";
+import { useState } from "react";
+
+
+import Modal from "react-bootstrap/Modal";
 import { formatCurrency } from "../utilities/formatCurrency";
 import { useShoppingCart } from "../context/ShoppingCartContext";
 type StoreItemProps = {
   id: number;
-  name: string;
+  title: string;
   price: number;
-  imgUrl: string;
+  description: string;
+  images: string[];
+  category: {
+    id: number;
+    name: string;
+    image: string;
+  };
 };
 
-const StoreItem = ({ id, name, price, imgUrl }: StoreItemProps) => {
+const styleTitle: React.CSSProperties = {
+  padding: 13,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  display: "-webkit-box",
+  WebkitLineClamp: 2 /* number of lines to show */,
+  lineClamp: 2,
+  WebkitBoxOrient: "vertical",
+};
+
+const StoreItem = ({
+  id,
+  title,
+  price,
+  description,
+  images,
+  category,
+}: StoreItemProps) => {
   const {
     getItemQuantity,
     decreaseCartQuantity,
@@ -16,23 +43,106 @@ const StoreItem = ({ id, name, price, imgUrl }: StoreItemProps) => {
     removeFromCart,
   } = useShoppingCart();
   const quantity: number = getItemQuantity(id);
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
     <>
       <Card>
+        <Modal show={show} onHide={handleClose} dialogClassName="modal-90w">
+          <Modal.Header closeButton>
+            <Modal.Title>Detail Product:</Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="">
+            <Card.Img
+              variant="top"
+              src={images[0]}
+              height="400px"
+              style={{ objectFit: "cover" }}
+              onClick={handleShow}
+            ></Card.Img>
+
+            <h2>{title}</h2>
+            <h5 className="text-muted"> Category: {category.name}</h5>
+            <p>{description}</p>
+            <h3 className="text-muted"> {formatCurrency(price)}</h3>
+          </Modal.Body>
+          <Modal.Footer>
+            <div className="mt-auto">
+              {quantity === 0 ? (
+                <Button
+                  className="w-100"
+                  onClick={() => increaseCartQuantity(id)}
+                >
+                  + Add To Cart
+                </Button>
+              ) : (
+                <div
+                  className="d-flex align-items-center flex-column"
+                  style={{ gap: "0.5rem" }}
+                >
+                  <div
+                    className="d-flex align-items-center justify-content"
+                    style={{ gap: ".5rem" }}
+                  >
+                    <Button
+                      className="fs-e"
+                      onClick={() => increaseCartQuantity(id)}
+                    >
+                      +
+                    </Button>
+                    <div>
+                      <span className="fs-3">{quantity}</span>
+                      in cart
+                    </div>
+                    <Button
+                      className="fs-e"
+                      onClick={() => decreaseCartQuantity(id)}
+                    >
+                      -
+                    </Button>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => removeFromCart(id)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </Modal.Footer>
+        </Modal>
+
         <Card.Img
           variant="top"
-          src={imgUrl}
-          height="200px"
+          src={images[0]}
+          height="250px"
           style={{ objectFit: "cover" }}
+          onClick={handleShow}
         ></Card.Img>
         <Card.Body className="d-flex flex-column">
-          <Card.Title className="d-flex justify-content-between align-items-baseline mb-4">
-            <span className="fs-2">{name}</span>
-            <span className="ms-2 text-muted">{formatCurrency(price)}</span>
+          <Card.Title
+            className="d-flex justify-content-between align-items-baseline mb-4"
+            onClick={handleShow}
+          >
+            <span className="fs-5" style={styleTitle}>
+              {title}
+            </span>
+            <span className="ms-2 fs-5 text-muted">
+              {formatCurrency(price)}
+            </span>
           </Card.Title>
+
           <div className="mt-auto">
             {quantity === 0 ? (
-              <Button className="w-100" onClick={()=> increaseCartQuantity(id)}>
+              <Button
+                className="w-100"
+                onClick={() => increaseCartQuantity(id)}
+              >
                 + Add To Cart
               </Button>
             ) : (
@@ -44,22 +154,37 @@ const StoreItem = ({ id, name, price, imgUrl }: StoreItemProps) => {
                   className="d-flex align-items-center justify-content"
                   style={{ gap: ".5rem" }}
                 >
-                  <Button className="fs-e" onClick={()=> increaseCartQuantity(id)}>+</Button>
+                  <Button
+                    className="fs-e"
+                    onClick={() => increaseCartQuantity(id)}
+                  >
+                    +
+                  </Button>
                   <div>
                     <span className="fs-3">{quantity}</span>
                     in cart
                   </div>
-                  <Button className="fs-e" onClick={()=> decreaseCartQuantity(id)}>-</Button>
+                  <Button
+                    className="fs-e"
+                    onClick={() => decreaseCartQuantity(id)}
+                  >
+                    -
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => removeFromCart(id)}
+                  >
+                    Remove
+                  </Button>
                 </div>
-
-                <Button variant="danger" size="sm" onClick={()=> removeFromCart(id)}>
-                  Remove
-                </Button>
               </div>
             )}
           </div>
         </Card.Body>
       </Card>
+
+      
     </>
   );
 };
