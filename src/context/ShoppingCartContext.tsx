@@ -56,31 +56,39 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
 
 
   useEffect(()=>{
-    setLoadingP(true);
+
     const fetchProductFromApi = async() =>{
       try{
+        setLoadingP(true);
         const result = await fetchProducts();
-        
         setDataP(result);
       }
       catch(error){
         console.log(error)
       }
+      finally{
+        setLoadingP(false)
+      }
     }
 
     const fetchCategoryFromApi = async() =>{
       try{
+        setLoadingP(true);
         const result = await fetchCategory();
         setDataC(result);
-        console.log(result)
+
       }
       catch(error){
         console.log(error)
       }
+      finally{
+        setLoadingP(false)
+      }
     }
+
     fetchProductFromApi();
     fetchCategoryFromApi();
-    setLoadingP(false)
+
   },[])
 
 

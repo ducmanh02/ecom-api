@@ -8,7 +8,7 @@ const api = axios.create({
 
 export const fetchProducts = async () => {
     try{
-        const response = await api.get('/products?offset=0&limit=36')
+        const response = await api.get('/products?offset=0&limit=60')
         return response.data;
     }
     catch(error){
