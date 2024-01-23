@@ -14,6 +14,10 @@ import Login from "./Login";
 import Signup from "./Signup";
 
 const Navbar = () => {
+  const redirectToHomePage = () => {
+    // Chuyển hướng đến trang khác
+    window.location.href = "/";
+  };
   const {
     openCart,
     cartQuantity,
@@ -59,7 +63,8 @@ const Navbar = () => {
                 </Button>
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                {isValidAccount === "NotLogIn" && (
+                {(isValidAccount === "NotLogIn" ||
+                  isValidAccount === "Wrong") && (
                   <>
                     <Dropdown.Item>
                       <Login />
@@ -77,6 +82,7 @@ const Navbar = () => {
                         onClick={() => {
                           setIsValidAccount("NotLogIn");
                           setAccount(undefined);
+                          redirectToHomePage();
                         }}
                       >
                         Logout
