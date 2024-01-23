@@ -67,6 +67,7 @@ const Login = () => {
             <Form.Control
               type="email"
               placeholder="name@example.com"
+              value="admin@mail.com"
               onChange={(e) => setEmail(e.target.value)}
             />
           </FloatingLabel>
@@ -74,6 +75,7 @@ const Login = () => {
             <Form.Control
               type="password"
               placeholder="Password"
+              value="admin123"
               onChange={(e) => setPassword(e.target.value)}
             />
           </FloatingLabel>
