@@ -1,6 +1,5 @@
-import { Button, Card,  } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import { useState } from "react";
-
 
 import Modal from "react-bootstrap/Modal";
 import { formatCurrency } from "../utilities/formatCurrency";
@@ -19,7 +18,7 @@ type StoreItemProps = {
 };
 
 const styleTitle: React.CSSProperties = {
-  padding: 13,
+  padding: 0,
   overflow: "hidden",
   textOverflow: "ellipsis",
   display: "-webkit-box",
@@ -61,13 +60,13 @@ const StoreItem = ({
               src={images[0]}
               height="400px"
               style={{ objectFit: "cover" }}
-              onClick={handleShow}
+              
             ></Card.Img>
 
             <h2>{title}</h2>
             <h5 className="text-muted"> Category: {category.name}</h5>
             <p>{description}</p>
-            <h3 className="text-muted"> {formatCurrency(price)}</h3>
+            <p className="fs-5 text-muted"> {formatCurrency(price)}</p>
           </Modal.Body>
           <Modal.Footer>
             <div className="mt-auto">
@@ -129,7 +128,7 @@ const StoreItem = ({
             className="d-flex justify-content-between align-items-baseline mb-4"
             onClick={handleShow}
           >
-            <span className="fs-5" style={styleTitle}>
+            <span className="" style={styleTitle}>
               {title}
             </span>
             <span className="ms-2 fs-5 text-muted">
@@ -152,7 +151,7 @@ const StoreItem = ({
               >
                 <div
                   className="d-flex align-items-center justify-content"
-                  style={{ gap: ".5rem" }}
+                  style={{ gap: "0.5rem" }}
                 >
                   <Button
                     className="fs-e"
@@ -161,8 +160,9 @@ const StoreItem = ({
                     +
                   </Button>
                   <div>
-                    <span className="fs-3">{quantity}</span>
-                    in cart
+                    <span style={{ fontSize: "0.75rem" }}>
+                      {quantity} in cart
+                    </span>
                   </div>
                   <Button
                     className="fs-e"
@@ -183,8 +183,6 @@ const StoreItem = ({
           </div>
         </Card.Body>
       </Card>
-
-      
     </>
   );
 };

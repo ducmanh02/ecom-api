@@ -1,8 +1,18 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from "react";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import ShoppingCart from "../components/ShoppingCart";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { fetchCategory, fetchProducts } from "../api/api";
+import { fetchCategory, fetchProducts, handleCheckAccount } from "../api/api";
 
+type token = {
+  access_token: string,
+  refresh_toke: string
+};
 type ShoppingCartProviderProps = {
   children: ReactNode;
 };
@@ -10,23 +20,31 @@ type CartItem = {
   id: number;
   quantity: number;
 };
-type Product={
+type Product = {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  images: string[];
+  category: {
+    id: number;
+    name: string;
+    image: string;
+  };
+};
+type User = {
   id: number,
-  title: string,
-  price: number,
-  description: string,
-  images: string[],
-  category:{
-    id: number,
-    name: string,
-    image: string,
-  }
+  name: string,
+  role: string,
+  email: string,
+  password: string,
+  avatar: string
 }
 
-type Category ={
-  id: number,
-  name: string
-}
+type Category = {
+  id: number;
+  name: string;
+};
 type ShoppingCartContext = {
   openCart: () => void;
   closeCart: () => void;
@@ -36,9 +54,15 @@ type ShoppingCartContext = {
   removeFromCart: (id: number) => void;
   cartQuantity: number;
   cartItem: CartItem[];
-  dataP: Product[] | undefined,
-  dataC: Category[] | undefined,
-  isLoadingP: boolean,
+  dataP: Product[] | undefined;
+  dataC: Category[] | undefined;
+
+  isLoadingP: boolean;
+  checkAccount: (email: string, password: string) => object
+  isValidAccount:string,
+  setIsValidAccount: (isValidAccount: string) => void
+  Account: User|undefined,
+  setAccount:(user: User|undefined) => void
 };
 
 const ShoppingCartContext = createContext({} as ShoppingCartContext);
@@ -52,45 +76,40 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
   const [dataP, setDataP] = useState();
   const [dataC, setDataC] = useState();
 
+  const [Account,setAccount] = useState<User>();
+
   const [isLoadingP, setLoadingP] = useState(false);
 
 
-  useEffect(()=>{
-
-    const fetchProductFromApi = async() =>{
-      try{
+  const [isValidAccount, setIsValidAccount] = useState("NotLogIn");
+  useEffect(() => {
+    const fetchProductFromApi = async () => {
+      try {
         setLoadingP(true);
         const result = await fetchProducts();
         setDataP(result);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoadingP(false);
       }
-      catch(error){
-        console.log(error)
-      }
-      finally{
-        setLoadingP(false)
-      }
-    }
+    };
 
-    const fetchCategoryFromApi = async() =>{
-      try{
+    const fetchCategoryFromApi = async () => {
+      try {
         setLoadingP(true);
         const result = await fetchCategory();
         setDataC(result);
-
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoadingP(false);
       }
-      catch(error){
-        console.log(error)
-      }
-      finally{
-        setLoadingP(false)
-      }
-    }
+    };
 
     fetchProductFromApi();
     fetchCategoryFromApi();
-
-  },[])
-
+  }, []);
 
   const [cartItem, setCartItems] = useLocalStorage<CartItem[]>(
     "shopping-cart",
@@ -149,11 +168,27 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
       return currItems.filter((item) => item.id !== id);
     });
   }
+
+  const checkAccount = async (email: string, password: string) => {
+    try {
+      const result:token = await handleCheckAccount(email, password);
+      console.log( result)
+      return result
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <ShoppingCartContext.Provider
       value={{
+        Account,
+        setAccount,
+        isValidAccount,
+        setIsValidAccount,
         isLoadingP,
         dataP,
+        
         dataC,
         openCart,
         closeCart,
@@ -163,9 +198,10 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
         increaseCartQuantity,
         decreaseCartQuantity,
         removeFromCart,
+        checkAccount,
       }}
     >
-    <ShoppingCart isOpened={isOpened}/>
+      <ShoppingCart isOpened={isOpened} />
       {children}
     </ShoppingCartContext.Provider>
   );

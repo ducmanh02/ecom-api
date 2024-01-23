@@ -52,6 +52,13 @@ const Store = () => {
     }, 500);
   };
 
+  const handleKeyPress = (event: { key: string; preventDefault: () => void; }) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+
+    }
+  };
+
   return (
     <>
       <h1 className="mb-5 text-center">Store</h1>
@@ -64,6 +71,7 @@ const Store = () => {
             type="text"
             placeholder="What do you want to search?"
             onChange={handleSearch}
+            onKeyPress={handleKeyPress}
           />
           <Form.Text className="text-muted">Ex: shoes...</Form.Text>
         </Form.Group>
