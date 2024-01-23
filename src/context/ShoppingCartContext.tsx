@@ -7,12 +7,9 @@ import {
 } from "react";
 import ShoppingCart from "../components/ShoppingCart";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { fetchCategory, fetchProducts, handleCheckAccount } from "../api/api";
+import { fetchCategory, fetchProducts } from "../api/api";
 
-type token = {
-  access_token: string,
-  refresh_toke: string
-};
+
 type ShoppingCartProviderProps = {
   children: ReactNode;
 };
@@ -58,7 +55,7 @@ type ShoppingCartContext = {
   dataC: Category[] | undefined;
 
   isLoadingP: boolean;
-  checkAccount: (email: string, password: string) => object
+
   isValidAccount:string,
   setIsValidAccount: (isValidAccount: string) => void
   Account: User|undefined,
@@ -169,15 +166,7 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
     });
   }
 
-  const checkAccount = async (email: string, password: string) => {
-    try {
-      const result:token = await handleCheckAccount(email, password);
-      console.log( result)
-      return result
-    } catch (error) {
-      console.log(error);
-    }
-  };
+
 
   return (
     <ShoppingCartContext.Provider
@@ -198,7 +187,7 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
         increaseCartQuantity,
         decreaseCartQuantity,
         removeFromCart,
-        checkAccount,
+
       }}
     >
       <ShoppingCart isOpened={isOpened} />

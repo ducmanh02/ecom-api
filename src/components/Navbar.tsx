@@ -45,7 +45,7 @@ const Navbar = () => {
           </Nav>
           <div className="d-flex gap-4">
             <Dropdown as={NavItem}>
-              <Dropdown.Toggle as={NavLink}>
+              <Dropdown.Toggle to="#" as={NavLink}>
                 <Button
                   style={{
                     width: "3rem",

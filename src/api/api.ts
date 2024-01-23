@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const API_BASE_URL = "https://api.escuelajs.co/api/v1"
 
+const API_BASE_URL = "https://api.escuelajs.co/api/v1"
 
 const api = axios.create({
     baseURL: API_BASE_URL
@@ -50,7 +50,7 @@ export const getAccount = async (access_token: string) => {
             headers: {
             "Authorization": `Bearer ${access_token}`
         }})
-        return response
+        return response.data
     }
 
     catch (error) {
