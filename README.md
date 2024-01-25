@@ -6,6 +6,9 @@
       
 ## Link deploy trên vercel: 
 https://ecom-api-lemon.vercel.app/
++ Account for testing: 
+    - admin: admin@mail.com - admin123
+    - customer: john@mail.com - changeme
 
 ## Api 
 https://fakeapi.platzi.com/en/rest/products/
